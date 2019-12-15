@@ -21,9 +21,9 @@ defmodule DisplayWeb.Router do
 
     get "/", PageController, :index
     live "/camera", Camera
-
     forward "/video.mjpg", Streamer
   end
+
 
   # Other scopes may use custom stacks.
   # scope "/api", DisplayWeb do

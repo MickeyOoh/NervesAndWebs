@@ -1,41 +1,49 @@
 defmodule Firmware.TakePicture do
-  
-  def start_link() do
+  use GenServer
+
+  def start_link(state) do
     Picam.Camera.start_link
-    pid = spawn_link(__MODULE__, :init, [])
-    {:ok, pid}
+    ##spawn_link(__MODULE__, :loop, [])
+    GenServer.start_link(__MODULE__, state)
   end
 
-  def init() do
+  def init(state) do
     IO.puts "** TakePicture.start_link #{inspect self()} **"
-    wait_node(false, 0)
+    Process.send_after(self(), :tick, 7000)
+    {:ok, state}  
+  end
 
-    Node.set_cookie(Node.self, :"chocolate-chip")
-
+  def handle_info(:tick, state) do
+    ##Node.set_cookie(Node.self, :"chocolate-chip")
     Application.get_env(:nerves_init_gadget, :node_name)
     |> String.to_atom()
     |> :global.register_name( self())
-
-    # Application.get_env(:firmware, :master_node)
-    # |> Node.connect()
-
-    loop()    
+    IO.puts "Node init <- handle_info #{inspect self()}"
+    {:noreply, state}
+  end
+  def handle_info(:read, state) do
+    
   end
 
-  def wait_node(false, timer) do
-    Process.sleep(1000)
-    wait_node(Node.alive?, timer + 1000)
+  def handle_call(:read, _from, data) do
+    data = Picam.next_frame
+    { :reply, data, data}
   end
-  def wait_node(true, timer) do
-    IO.puts("node start -> #{timer} ms")
+
+  ## add cast
+  def handle_cast({:write, data}, state) do 
+    { :noreply, data}
   end
 
   def take_and_read_picture() do
     Picam.Camera.start_link
-
     Picam.next_frame
     # |> Base.encode64()
     # |> IO.puts()
+  end
+
+  def get_picture() do
+    GenServer.call(__MODULE__, :read)
   end
 
   def loop() do

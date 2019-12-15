@@ -8,13 +8,13 @@ defmodule Firmware.TempHumid do
   def start_link(pin) do
     IO.puts "start TempHumid -> #{pin}"
     GenServer.start_link(__MODULE__, pin)
-    #DHT.start_link(pin)
+    ##DHT.start_link(pin)
   end
 
   def init(dht_pin) do
     #Digital.set_pin_mode(2, :output)
     state = %Firmware.TempHumid{dht: dht_pin}
-    Logger.debug "TempHumid #{inspect :calendar.local_time}"
+    IO.puts "TempHumid #{inspect :calendar.local_time}"
     DHT.subscribe(dht_pin, :changed)
     IO.inspect state
     {:ok, state}
@@ -33,12 +33,6 @@ defmodule Firmware.TempHumid do
   def handle_info(message, state) do
     IO.inspect message
     {:noreply, state}
-  end
-  def handle_call(:read, _from, state) do
-    {:reply, state, state}
-  end
-  def handle_cast({:write, value}, state) do
-    {:noreply, state ++ [value]}
   end
  
   defp format_temp(temp) do
