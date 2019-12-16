@@ -1,7 +1,7 @@
 defmodule Display.GetPicture do
 
-  @node1  :"nerves1@192.168.100.123"
-  @mynode :"master@192.168.100.121"
+  @node1  :"nerves1@Nerves.local"
+  @mynode :"master@master.local"
   def start_link() do
     pid = spawn_link(__MODULE__, :init, [])
     {:ok, pid}

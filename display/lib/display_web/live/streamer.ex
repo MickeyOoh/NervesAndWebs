@@ -13,7 +13,7 @@ defmodule DisplayWeb.Streamer do
     opts
   end
 
-  def call(conn, opts) do
+  def call(conn, _opts) do
     IO.puts "Streamer call invoked #{inspect self()}"
     conn
     |> put_resp_header("Age", "0")

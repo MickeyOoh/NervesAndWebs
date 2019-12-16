@@ -33,7 +33,7 @@ node_name = if Mix.env() != :prod, do: "nerves1"
 config :nerves_init_gadget,
   # ifname: "usb0",
   # address_method: :dhcpd,
-  mdns_domain: "192.168.100.123",
+  mdns_domain: "Nerves.local",
   node_name: node_name,
   node_host: :mdns_domain,
   ifname: "wlan0",

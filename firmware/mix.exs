@@ -65,7 +65,8 @@ defmodule Firmware.MixProject do
   def release do
     [
       overwrite: true,
-      cookie: "#{@app}_cookie",
+      ##cookie: "#{@app}_cookie",
+      cookie: "chocolate-chip",
       include_erts: &Nerves.Release.erts/0,
       steps: [&Nerves.Release.init/1, :assemble],
       strip_beams: Mix.env() == :prod
