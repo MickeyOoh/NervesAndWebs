@@ -1,30 +1,29 @@
-defmodule Firmware.LedDemo do
+defmodule Firmware.LedDemo2 do
+
   use GenServer
   alias GrovePi.Digital, as: Dio
-  alias Firmware.LedDemo
+  alias Firmware.LedDemo2, as: LedDemo
   defstruct [:pin, :sts]
-  @interval 100
-  @pinno  2
 
   def start_link([pin, sts]= state) do
-    IO.puts "LedDemo.start_link #{inspect state}"
+    IO.puts "LedDemo2.start_link #{inspect state}"
     state = %LedDemo{ %LedDemo{} | pin: pin, sts: sts}
     GenServer.start_link(__MODULE__, state)
   end
-
   def init(state) do
-    Dio.set_pin_mode(@pinno, :output)
-    #Dio.set_pin_mode(3, :output)
+    #Dio.set_pin_mode(2, :output)
+    Dio.set_pin_mode(3, :output)
     #Dio.set_pin_mode(4, :input)
-    Process.send_after(self(), :tick, @interval)
-    IO.puts "LedDemo init(#{inspect state}) pid=#{inspect self()}"
+    Process.send_after(self(), :tick, 100)
+    IO.puts "LedDemo2 init(#{inspect state}) pid=#{inspect self()}"
     {:ok, state}
   end
 
   def handle_info(:tick, state) do
-    Process.send_after(self(), :tick, @interval)
+    Process.send_after(self(), :tick, 40)
+    pin = state.pin
     sts = onoff(state.sts)
-    Dio.write(@pinno, sts)
+    Dio.write(pin, sts)
     state = %LedDemo{state | sts: sts}   
     #state = %LedDemo{state | sts: sts}
     {:noreply, state}
@@ -49,4 +48,5 @@ defmodule Firmware.LedDemo do
 
   defp onoff(0), do: 1
   defp onoff(_), do: 0
+
 end

@@ -21,17 +21,17 @@ defmodule DisplayWeb.Streamer do
     |> put_resp_header("Pragma", "no-cache")
     |> put_resp_header("Content-Type", "multipart/x-mixed-replace; boundary=--#{@boundary}")
     |> send_chunked(200)
-    |> send_pictures
+    |> send_pictures( File.read!("priv/static/images/racoondog.jpg"))
   end
 
 
-  defp send_pictures(conn) do
-    send_picture(conn)
-    send_pictures(conn)
+  defp send_pictures(conn, data) do
+    send_picture(conn, data)
+    send_pictures(conn, data)
   end
 
-  defp send_picture(conn) do
-    jpg = get_image()
+  defp send_picture(conn, data) do
+    jpg = get_image(data)
     size = byte_size(jpg)
     ##IO.puts "send_picture #{size}"
     header = "------#{@boundary}\r\nContent-Type:image/jpeg\r\nContent-length: #{size}\r\n\r\n"
@@ -42,7 +42,7 @@ defmodule DisplayWeb.Streamer do
          do: conn
   end
 
-  defp get_image() do
+  defp get_image(data) do
     #{{_,_,_},{_,_,sec}} = :calendar.local_time
     #IO.puts "get_image: #{sec} [sec]"
     pid = :global.whereis_name(:nerves1)
@@ -53,7 +53,8 @@ defmodule DisplayWeb.Streamer do
             {:ok, data} -> data
           end
       _ -> #IO.puts "waiting connect by set into global"
-           File.read!("priv/static/images/racoondog.jpg")
+           #File.read!("priv/static/images/racoondog.jpg")
+           data
     end
     #IO.iodata_to_binary(data)
   end

@@ -2,31 +2,28 @@ defmodule Firmware.TempHumid do
   use GenServer
   require Logger
 
-  defstruct [:dht]
+  defstruct [:dht, :temp, :humidity]
   alias GrovePi.{Digital, DHT}
 
   def start_link(pin) do
-    IO.puts "start TempHumid -> #{pin}"
-    GenServer.start_link(__MODULE__, pin)
-    ##DHT.start_link(pin)
+    GenServer.start_link(__MODULE__, pin, name: __MODULE__)
   end
 
   def init(dht_pin) do
-    #Digital.set_pin_mode(2, :output)
-    state = %Firmware.TempHumid{dht: dht_pin}
-    IO.puts "TempHumid #{inspect :calendar.local_time}"
+    state = %Firmware.TempHumid{dht: dht_pin, temp: 0, humidity: 0}
     DHT.subscribe(dht_pin, :changed)
-    IO.inspect state
     {:ok, state}
+  end
+  def get_temphumid() do
+    state = GenServer.call(__MODULE__, :read)
+    state.temp <> state.humidity
   end
 
   def handle_info({_pin, :changed, %{temp: temp, humidity: humidity}}, state) do
-    #Digital.write(2, 1)
     temp = format_temp(temp)
     humidity = format_humidity(humidity)
-
+    state = %{state | temp: temp, humidity: humidity}
     Logger.debug(temp <> " " <> humidity)
-    IO.puts temp <> " " <> humidity
     {:noreply, state}
   end
 
@@ -34,9 +31,13 @@ defmodule Firmware.TempHumid do
     IO.inspect message
     {:noreply, state}
   end
+
+  def handle_call(:read, _from, state) do
+    { :reply, state, state}
+  end
  
   defp format_temp(temp) do
-    "temp: #{Float.to_string(temp)} C"
+    "temp: #{Float.to_string(temp)}"
   end
 
   defp format_humidity(humidity) do

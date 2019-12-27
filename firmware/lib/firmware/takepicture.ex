@@ -57,7 +57,7 @@ defmodule Firmware.TakePicture do
   end
 
   def loop() do
-    ##IO.puts "** req/res process **"
+    IO.puts "** req/res process **"
     receive do
       {sender, "request"} ->
         ##IO.puts "#{msg} from #{inspect sender} #{:time.uc}"

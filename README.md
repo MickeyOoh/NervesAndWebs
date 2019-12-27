@@ -6,6 +6,10 @@ data
 1. picam - camera data 
 2. each Grobepi data such as temprature and humudity
 
+grovepi
+----
+it doesn't work as a original library, so modification is needed.
+
 
 Display
 ----
