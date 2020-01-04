@@ -2,6 +2,7 @@ defmodule Firmware.TempHumid do
   use GenServer
   require Logger
 
+  @interval 1_000   # 1 sec
   defstruct [:dht, :temp, :humidity]
   alias GrovePi.{Digital, DHT}
 
@@ -11,7 +12,8 @@ defmodule Firmware.TempHumid do
 
   def init(dht_pin) do
     state = %Firmware.TempHumid{dht: dht_pin, temp: 0, humidity: 0}
-    DHT.subscribe(dht_pin, :changed)
+    Process.send_after(self(), :tick, @interval)
+    #DHT.subscribe(dht_pin, :changed)
     {:ok, state}
   end
   def get_temphumid() do
@@ -27,8 +29,8 @@ defmodule Firmware.TempHumid do
     {:noreply, state}
   end
 
-  def handle_info(message, state) do
-    IO.inspect message
+  def handle_info(:kick, state) do
+    Process.send_after(self(), :tick, @interval)
     {:noreply, state}
   end
 

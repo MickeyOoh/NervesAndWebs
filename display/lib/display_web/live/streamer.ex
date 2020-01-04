@@ -24,7 +24,6 @@ defmodule DisplayWeb.Streamer do
     |> send_pictures( File.read!("priv/static/images/racoondog.jpg"))
   end
 
-
   defp send_pictures(conn, data) do
     send_picture(conn, data)
     send_pictures(conn, data)
@@ -43,20 +42,18 @@ defmodule DisplayWeb.Streamer do
   end
 
   defp get_image(data) do
-    #{{_,_,_},{_,_,sec}} = :calendar.local_time
-    #IO.puts "get_image: #{sec} [sec]"
     pid = :global.whereis_name(:nerves1)
-    case is_pid(pid) do
+    case is_pid(pid) do      
       true -> 
-          send pid, {self(), "request"}
-          receive do
-            {:ok, data} -> data
-          end
-      _ -> #IO.puts "waiting connect by set into global"
-           #File.read!("priv/static/images/racoondog.jpg")
+          %{image: image} = GenServer.call(pid, :read)
+          image
+          # send pid, {self(), "request"}
+          # receive do
+          #   {:ok, data} -> data
+          # end
+      _ -> Process.sleep(500)
            data
     end
-    #IO.iodata_to_binary(data)
   end
 
 end

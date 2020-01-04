@@ -14,8 +14,6 @@ defmodule Firmware.LedDemo do
 
   def init(state) do
     Dio.set_pin_mode(@pinno, :output)
-    #Dio.set_pin_mode(3, :output)
-    #Dio.set_pin_mode(4, :input)
     Process.send_after(self(), :tick, @interval)
     IO.puts "LedDemo init(#{inspect state}) pid=#{inspect self()}"
     {:ok, state}
@@ -26,7 +24,6 @@ defmodule Firmware.LedDemo do
     sts = onoff(state.sts)
     Dio.write(@pinno, sts)
     state = %LedDemo{state | sts: sts}   
-    #state = %LedDemo{state | sts: sts}
     {:noreply, state}
   end
   def handle_call(:din, _from, state) do

@@ -1,7 +1,7 @@
-defmodule Firmware.PersonIdentify do
+defmodule Firmware.PassiveInfrared do
   use GenServer
   alias GrovePi.Digital, as: GPir
-  alias Firmware.PersonIdentify, as: PIR
+  alias Firmware.PassiveInfrared, as: PIR
   defstruct [:piron, :onoff, :period]
   @pinno 8        # D8
   @interval 100   # ms
