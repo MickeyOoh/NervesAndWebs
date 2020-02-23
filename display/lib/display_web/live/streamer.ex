@@ -16,9 +16,9 @@ defmodule DisplayWeb.Streamer do
   def call(conn, _opts) do
     IO.puts "Streamer call invoked #{inspect self()}"
     conn
-    |> put_resp_header("Age", "0")
-    |> put_resp_header("Cache-Control", "no-cache, private")
-    |> put_resp_header("Pragma", "no-cache")
+    #|> put_resp_header("Age", "0")
+    #|> put_resp_header("Cache-Control", "no-cache, private")
+    #|> put_resp_header("Pragma", "no-cache")
     |> put_resp_header("Content-Type", "multipart/x-mixed-replace; boundary=--#{@boundary}")
     |> send_chunked(200)
     |> send_pictures( File.read!("priv/static/images/racoondog.jpg"))
@@ -42,7 +42,7 @@ defmodule DisplayWeb.Streamer do
   end
 
   defp get_image(data) do
-    pid = :global.whereis_name(:nerves1)
+    pid = :global.whereis_name(:firm)
     case is_pid(pid) do      
       true -> 
           %{image: image} = GenServer.call(pid, :read)
@@ -51,7 +51,7 @@ defmodule DisplayWeb.Streamer do
           # receive do
           #   {:ok, data} -> data
           # end
-      _ -> Process.sleep(500)
+      _ -> Process.sleep(1000)
            data
     end
   end

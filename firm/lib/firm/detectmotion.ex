@@ -1,4 +1,4 @@
-defmodule Firmware.Detect do
+defmodule Firm.Detect do
   use GenServer
   @motion_sencitivity 0.1
 

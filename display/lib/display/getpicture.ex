@@ -1,6 +1,6 @@
 defmodule Display.GetPicture do
 
-  @node1  :"nerves1@Nerves.local"
+  @node1  :"firm@nerves.local"
   @mynode :"master@master.local"
   def start_link() do
     pid = spawn_link(__MODULE__, :init, [])
@@ -36,7 +36,7 @@ defmodule Display.GetPicture do
   end
 
   def get_image() do
-    pid = :global.whereis_name(:nerves1)
+    pid = :global.whereis_name(:firm)
     case is_pid(pid) do
       true -> 
         send pid, {self(), "request"}
